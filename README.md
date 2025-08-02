@@ -4,3 +4,5 @@ Remember to install the yfinance library!
 You can do so by using:
 
 pip install yfinance
+
+To add or modify the investments you made, just run the Insert.py file, you will be guided step by step.
