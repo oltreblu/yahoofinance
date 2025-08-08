@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import yfinance
+import random
+import string
 
 def insert():
     path = Path('Investments.json')
@@ -53,8 +55,11 @@ def insert():
             if investment_to_modify['stocks_bought'] <= 0:
                 print("There are no stocks left! Removing the investment!")
                 del investments[i]
+                change_file_name()
+
             print("Done!")
         else:
+            change_file_name()
             del investments[i]
 
     else:
@@ -120,6 +125,20 @@ def modify_stocks(remove_or_add):
                 return number_stocks
             except ValueError:
                 print("Try Again.")
+
+def change_file_name():
+    try:
+        with open('Stocks_file', 'r') as file:
+            text = file.read()
+            open('Stocks_file', 'w')
+        file_name = ''
+        for digit_in_name in range(10):
+            file_name += random.choice(list(string.ascii_lowercase))
+        with open(file_name, 'w') as file:
+            file.write(text)
+
+    except FileNotFoundError:
+        return
 
 if __name__ == '__main__':
     insert()
