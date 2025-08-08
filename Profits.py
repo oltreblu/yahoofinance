@@ -5,7 +5,8 @@ from datetime import datetime
 import Insert
 
 class Investment:
-    def __init__(self, ticker, bought_value, stocks_bought):
+    def __init__(self,name, ticker, bought_value, stocks_bought):
+        self.name = name
         self.ticker = ticker
         self.bought_value = bought_value
         self.stocks_bought = stocks_bought
@@ -31,7 +32,7 @@ def main():
 
     investments = []
     for investment in investments_dict:
-        investment['name'] = Investment(investment['ticker'], investment['value'], investment['stocks_bought'] )
+        investment['name'] = Investment(investment['name'],investment['ticker'], investment['value'], investment['stocks_bought'] )
         investments.append(investment['name'])
 
     datas = [yfinance.Ticker(investment.ticker) for investment in investments]
@@ -53,8 +54,14 @@ def main():
         readable_file = open('Stocks_file', 'r').read()
 
     except FileNotFoundError:
-        file = open('Stocks_file', 'w')
-        file.close()
+        with open('Stocks_file', 'w') as file:
+            txt = 'Time\tDate\t'
+            for investment in investments:
+                txt += f'\t{investment.name}'
+
+            txt += '\tSum\n'
+            file.write(txt)
+
         readable_file = open('Stocks_file', 'r').read()
 
     if datetime.now().strftime('%d-%m-%Y') in readable_file:
@@ -68,13 +75,21 @@ def main():
             for line in lines[:len(lines) - 1]:
                 final_text += line + '\n'
 
-            final_text += f'{formatted_date}\t {sum(profits)}\n'
+            final_text += f'{formatted_date}'
+            for profit in profits:
+                final_text += f'\t{round(profit, 4)}'
+
+            final_text += f'\t{round(sum(profits), 4)}\n'
             file.write(final_text)
 
     else:
-        file = open('Stocks_file', 'a')
-        print(f"The profits are: {sum(profits)}")
-        file.write(f"{formatted_date}\t {sum(profits)}\n")
-        file.close()
+        with open('Stocks_file', 'a') as file:
+            print(f"The profits are: {sum(profits)}")
+            final_text = ''
+            final_text += f'{formatted_date}'
+            for profit in profits:
+                final_text += f'\t{round(profit, 4)}'
 
+            final_text += f'\t{round(sum(profits), 4)}\n'
+            file.write(final_text)
 main()
